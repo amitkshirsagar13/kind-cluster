@@ -13,6 +13,9 @@ kind create cluster --config dev-cluster.yaml
 ### Setup Ingress
 - Follow Ingress Setup instructions [ReadMe](./ingress/readme.md).
 
+### Setup MetalLB
+- Follow Ingress Setup instructions [ReadMe](./ingress/readme.md).
+
 ### Deploy Demo Echo Application
 ```
 kubectl apply -f echo-service.yaml
@@ -34,4 +37,5 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm repo update
 helm install prom-operator-01 prometheus-community/kube-prometheus-stack
 kubectl get services
+kubectl apply -f ./prometheus/grafana.lb.yaml
 ```
