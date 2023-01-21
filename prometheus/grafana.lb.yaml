@@ -1,0 +1,13 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: grafana-service
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/instance: prom-operator-01
+    app.kubernetes.io/name: grafana
+  ports:
+  - port: 80
+    targetPort: 3000
