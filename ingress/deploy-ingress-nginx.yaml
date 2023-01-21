@@ -427,6 +427,10 @@ spec:
     type: RollingUpdate
   template:
     metadata:
+      # annotations:
+      #   prometheus.io/scrape: "true"
+      #   prometheus.io/port: "9113"
+      #   prometheus.io/scheme: http
       labels:
         app.kubernetes.io/component: controller
         app.kubernetes.io/instance: ingress-nginx
@@ -444,6 +448,8 @@ spec:
         - --validating-webhook-key=/usr/local/certificates/key
         - --watch-ingress-without-class=true
         - --publish-status-address=localhost
+        # - -enable-prometheus-metrics=true
+        # - -prometheus-metrics-listen-port=9113
         env:
         - name: POD_NAME
           valueFrom:
@@ -485,6 +491,9 @@ spec:
         - containerPort: 8443
           name: webhook
           protocol: TCP
+        # - containerPort: 9113
+        #   name: prometheus
+        #   protocol: TCP
         readinessProbe:
           failureThreshold: 3
           httpGet:
