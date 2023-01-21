@@ -1,0 +1,63 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: foo-app
+  namespace: lb
+  labels:
+    app: http-echo
+spec:
+  containers:
+  - name: foo-app
+    image: hashicorp/http-echo:0.2.3
+    args:
+    - "-text=foo"
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: bar-app
+  namespace: lb
+  labels:
+    app: http-echo
+spec:
+  containers:
+  - name: bar-app
+    image: hashicorp/http-echo:0.2.3
+    args:
+    - "-text=bar"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: foo-service
+  namespace: lb
+spec:
+  type: LoadBalancer
+  selector:
+    app: http-echo
+  ports:
+  # Default port used by the image
+  - port: 5678
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: echo-ingress
+  namespace: lb
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+  # http://foo-bar.localtest.me
+  - host: foo-bar.localtest.me
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: http-echo
+            port:
+              number: 5678
