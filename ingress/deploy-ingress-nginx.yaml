@@ -367,7 +367,7 @@ spec:
   ipFamilyPolicy: SingleStack
   ports:
   - name: prometheus
-    port: 10254
+    port: 9113
     targetPort: prometheus
   - appProtocol: http
     name: http
