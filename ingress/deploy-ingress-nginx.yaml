@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/name: ingress-nginx
-  name: ingress-nginx
+  name: nginx
 ---
 apiVersion: v1
 automountServiceAccountToken: true
@@ -17,7 +17,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.5.1
   name: ingress-nginx
-  namespace: ingress-nginx
+  namespace: nginx
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -29,7 +29,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.5.1
   name: ingress-nginx-admission
-  namespace: ingress-nginx
+  namespace: nginx
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -41,7 +41,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.5.1
   name: ingress-nginx
-  namespace: ingress-nginx
+  namespace: nginx
 rules:
 - apiGroups:
   - ""
@@ -146,7 +146,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.5.1
   name: ingress-nginx-admission
-  namespace: ingress-nginx
+  namespace: nginx
 rules:
 - apiGroups:
   - ""
@@ -266,7 +266,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.5.1
   name: ingress-nginx
-  namespace: ingress-nginx
+  namespace: nginx
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -274,7 +274,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: ingress-nginx
-  namespace: ingress-nginx
+  namespace: nginx
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -286,7 +286,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.5.1
   name: ingress-nginx-admission
-  namespace: ingress-nginx
+  namespace: nginx
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -294,7 +294,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: ingress-nginx-admission
-  namespace: ingress-nginx
+  namespace: nginx
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -312,7 +312,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: ingress-nginx
-  namespace: ingress-nginx
+  namespace: nginx
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -331,7 +331,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: ingress-nginx-admission
-  namespace: ingress-nginx
+  namespace: nginx
 ---
 apiVersion: v1
 data:
@@ -345,7 +345,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.5.1
   name: ingress-nginx-controller
-  namespace: ingress-nginx
+  namespace: nginx
 ---
 apiVersion: v1
 kind: Service
@@ -357,7 +357,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.5.1
   name: ingress-nginx-controller
-  namespace: ingress-nginx
+  namespace: nginx
 spec:
   ipFamilies:
   - IPv4
@@ -389,7 +389,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.5.1
   name: ingress-nginx-controller-admission
-  namespace: ingress-nginx
+  namespace: nginx
 spec:
   ports:
   - appProtocol: https
@@ -412,7 +412,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.5.1
   name: ingress-nginx-controller
-  namespace: ingress-nginx
+  namespace: nginx
 spec:
   minReadySeconds: 0
   revisionHistoryLimit: 10
@@ -427,10 +427,10 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      # annotations:
-      #   prometheus.io/scrape: "true"
-      #   prometheus.io/port: "9113"
-      #   prometheus.io/scheme: http
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9113"
+        prometheus.io/scheme: http
       labels:
         app.kubernetes.io/component: controller
         app.kubernetes.io/instance: ingress-nginx
@@ -448,8 +448,8 @@ spec:
         - --validating-webhook-key=/usr/local/certificates/key
         - --watch-ingress-without-class=true
         - --publish-status-address=localhost
-        # - -enable-prometheus-metrics=true
-        # - -prometheus-metrics-listen-port=9113
+        # - -enable-prometheus-metrics
+        # - -prometheus-metrics-listen-port
         env:
         - name: POD_NAME
           valueFrom:
@@ -491,9 +491,9 @@ spec:
         - containerPort: 8443
           name: webhook
           protocol: TCP
-        # - containerPort: 9113
-        #   name: prometheus
-        #   protocol: TCP
+        - containerPort: 9113
+          name: prometheus
+          protocol: TCP
         readinessProbe:
           failureThreshold: 3
           httpGet:
@@ -548,7 +548,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.5.1
   name: ingress-nginx-admission-create
-  namespace: ingress-nginx
+  namespace: nginx
 spec:
   template:
     metadata:
@@ -595,7 +595,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.5.1
   name: ingress-nginx-admission-patch
-  namespace: ingress-nginx
+  namespace: nginx
 spec:
   template:
     metadata:
@@ -663,7 +663,7 @@ webhooks:
   clientConfig:
     service:
       name: ingress-nginx-controller-admission
-      namespace: ingress-nginx
+      namespace: nginx
       path: /networking/v1/ingresses
   failurePolicy: Fail
   matchPolicy: Equivalent

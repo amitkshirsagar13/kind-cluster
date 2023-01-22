@@ -19,7 +19,7 @@ spec:
         - name: echo-pv-storage
           persistentVolumeClaim:
             claimName: echo-pv-claim
-      hostname: echo-server
+      hostname: echo-write-1
       hostAliases:
         - ip: "127.0.0.1"
           hostnames:
@@ -77,12 +77,11 @@ spec:
         - name: echo-pv-storage
           persistentVolumeClaim:
             claimName: echo-pv-claim-read
-      hostname: echo-server
+      hostname: echo-read
       hostAliases:
         - ip: "127.0.0.1"
           hostnames:
-          - "echo1.local"
-          - "echo2.local"
+          - "echo.local"
       containers:
       - name: echo3
         image: gcr.io/google_containers/echoserver:1.10
@@ -204,6 +203,13 @@ spec:
   - host: echo-read.localtest.me
     http:
       paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: echo-service-read
+            port:
+              number: 8080
       - path: /echo
         pathType: Prefix
         backend:
@@ -216,6 +222,13 @@ spec:
   - host: echo-write.localtest.me
     http:
       paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: echo-service-read
+            port:
+              number: 8080
       - path: /echo1
         pathType: Prefix
         backend:

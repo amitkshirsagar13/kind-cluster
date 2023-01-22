@@ -58,6 +58,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: http-echo
+            name: foo-service
             port:
               number: 5678

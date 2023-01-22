@@ -27,12 +27,14 @@ nodes:
   - containerPort: 80
     hostPort: 80
     protocol: TCP
+    listenAddress: "0.0.0.0"
   - containerPort: 443
     hostPort: 443
     protocol: TCP
-- role: worker
-- role: worker
-- role: worker
+    listenAddress: "0.0.0.0"
+# - role: worker
+# - role: worker
+# - role: worker
 
 networking:
   apiServerAddress: "127.0.0.1"
