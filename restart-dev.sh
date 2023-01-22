@@ -10,6 +10,23 @@ kind create cluster --config dev-cluster.yaml
 # sleep 60s
 
 
+
+# helm install nginx nginx-stable/nginx-ingress \
+# --namespace nginx --create-namespace \
+# --set controller.metrics.enabled=true \
+# --set controller.service.type=NodePort \
+# --set-string controller.podAnnotations."prometheus\.io/scrape"="true" \
+# --set-string controller.podAnnotations."prometheus\.io/port"="10254" \
+# --set controller.enableLatencyMetrics=true \
+# --set prometheus.create=true \
+# --set prometheus.port=10254 \
+# --set prometheus.scheme=http
+
+# helm upgrade --install ingress-nginx ingress-nginx \
+#   --repo https://kubernetes.github.io/ingress-nginx \
+#   --namespace nginx --create-namespace \
+
+kubectl create namespace nginx
 kubectl apply -f ./ingress/deploy-ingress-nginx.yaml
 kubectl apply -f ./loadbalancer/metallb-native.yaml
 sleep 150s

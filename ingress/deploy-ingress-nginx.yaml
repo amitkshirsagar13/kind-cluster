@@ -352,7 +352,7 @@ kind: Service
 metadata:
   annotations:
     prometheus.io/scrape: "true"
-    prometheus.io/port: "9113"
+    prometheus.io/port: "10254"
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/instance: ingress-nginx
@@ -367,7 +367,7 @@ spec:
   ipFamilyPolicy: SingleStack
   ports:
   - name: prometheus
-    port: 9113
+    port: 10254
     targetPort: prometheus
   - appProtocol: http
     name: http
@@ -433,6 +433,9 @@ spec:
     type: RollingUpdate
   template:
     metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "10254"
       labels:
         app.kubernetes.io/component: controller
         app.kubernetes.io/instance: ingress-nginx
@@ -494,7 +497,7 @@ spec:
           name: webhook
           protocol: TCP
         - name: prometheus
-          containerPort: 9113
+          containerPort: 10254
         readinessProbe:
           failureThreshold: 3
           httpGet:
