@@ -28,6 +28,6 @@ kubectl apply -f ./loadbalancer/lb-demo-deploy.yaml
 
 helm install prom-operator-01 prometheus-community/kube-prometheus-stack
 sleep 20s
-kubectl apply -f ./prometheus/grafana.lb.yaml
+kubectl apply -f ./prometheus/monitoring.ingress.yaml
 
-kubectl describe service grafana-service
+kubectl describe ingress monitoring-ingress
