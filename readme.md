@@ -2,8 +2,6 @@
 
 ### Install go
 
-
-
 ### Install kind
 
 ```
