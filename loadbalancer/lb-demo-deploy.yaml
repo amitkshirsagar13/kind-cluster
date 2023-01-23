@@ -2,7 +2,7 @@ kind: Pod
 apiVersion: v1
 metadata:
   name: foo-app
-  namespace: lb
+  namespace: demo
   labels:
     app: http-echo
 spec:
@@ -16,7 +16,7 @@ kind: Pod
 apiVersion: v1
 metadata:
   name: bar-app
-  namespace: lb
+  namespace: demo
   labels:
     app: http-echo
 spec:
@@ -30,7 +30,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: foo-service
-  namespace: lb
+  namespace: demo
 spec:
   type: LoadBalancer
   selector:
@@ -44,7 +44,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: echo-ingress
-  namespace: lb
+  namespace: demo
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/rewrite-target: /$1

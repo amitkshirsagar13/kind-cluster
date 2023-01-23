@@ -3,6 +3,39 @@
 kind delete cluster -n dev 
 kind create cluster --config dev-cluster.yaml
 
+helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
+
+kubectl create namespace demo
+kubectl apply -f ./loadbalancer/lb-demo-deploy.yaml
+kubectl apply -f ./ingress/echo-service.yaml
+
+kubectl apply -f ./loadbalancer/metallb-native.yaml
+docker network inspect -f '{{.IPAM.Config}}' kind
+kubectl apply -f ./loadbalancer/metallb-config-ipaddresspool.yaml
+sleep 30s
+
+./loadbalancer/test-lb.sh
+
+kubectl apply -f ./prometheus/monitoring.ingress.yaml
+kubectl apply -f ./prometheus/monitoring.lb.yaml
+
+kubectl describe ingress monitoring
+
+# helm install ingress nginx-stable/nginx-ingress \
+# --namespace ingress --create-namespace \
+# --set controller.kind=deployment \
+# --set controller.service.type=NodePort \
+# --set controller.metrics.serviceMonitor.additionalLabels.release="kube-prometheus-stack" \
+# --set controller.metrics.serviceMonitor.enabled=true
+    
+helm install ingress ingress-nginx \
+  --namespace ingress --create-namespace \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --set controller.metrics.enabled=true \
+  --set-string controller.podAnnotations."prometheus\.io/scrape"="true" \
+  --set-string controller.podAnnotations."prometheus\.io/port"="10254"
+
+helm uninstall ingress --namespace ingress 
 
 # kubectl apply -f ./ingress/contour.yaml
 # sleep 60s
@@ -26,25 +59,10 @@ kind create cluster --config dev-cluster.yaml
 #   --repo https://kubernetes.github.io/ingress-nginx \
 #   --namespace nginx --create-namespace \
 
-kubectl create namespace nginx
+# kubectl create namespace nginx
 kubectl apply -f ./ingress/deploy-ingress-nginx.yaml
-kubectl apply -f ./loadbalancer/metallb-native.yaml
-sleep 150s
 
-kubectl create namespace echo
-kubectl apply -f ./ingress/echo-service.yaml
+# sleep 150s
 
-docker network inspect -f '{{.IPAM.Config}}' kind
-kubectl apply -f ./loadbalancer/metallb-config-ipaddresspool.yaml
-sleep 30s
+# sleep 20s
 
-kubectl create namespace lb
-kubectl apply -f ./loadbalancer/lb-demo-deploy.yaml
-
-./loadbalancer/test-lb.sh
-
-helm install prom-operator-01 prometheus-community/kube-prometheus-stack
-sleep 20s
-kubectl apply -f ./prometheus/monitoring.ingress.yaml
-
-kubectl describe ingress monitoring-ingress
