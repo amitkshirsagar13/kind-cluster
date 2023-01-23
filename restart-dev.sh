@@ -3,6 +3,9 @@
 kind delete cluster -n dev 
 kind create cluster --config dev-cluster.yaml
 
+kubectl create namespace nginx
+kubectl apply -f ./ingress/deploy-ingress-nginx.yaml
+
 helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
 
 kubectl create namespace demo
@@ -12,6 +15,7 @@ kubectl apply -f ./ingress/echo-service.yaml
 kubectl apply -f ./loadbalancer/metallb-native.yaml
 docker network inspect -f '{{.IPAM.Config}}' kind
 kubectl apply -f ./loadbalancer/metallb-config-ipaddresspool.yaml
+
 sleep 30s
 
 ./loadbalancer/test-lb.sh
@@ -28,14 +32,14 @@ kubectl describe ingress monitoring
 # --set controller.metrics.serviceMonitor.additionalLabels.release="kube-prometheus-stack" \
 # --set controller.metrics.serviceMonitor.enabled=true
     
-helm install ingress ingress-nginx \
-  --namespace ingress --create-namespace \
-  --repo https://kubernetes.github.io/ingress-nginx \
-  --set controller.metrics.enabled=true \
-  --set-string controller.podAnnotations."prometheus\.io/scrape"="true" \
-  --set-string controller.podAnnotations."prometheus\.io/port"="10254"
+# helm install ingress ingress-nginx \
+#   --namespace ingress --create-namespace \
+#   --repo https://kubernetes.github.io/ingress-nginx \
+#   --set controller.metrics.enabled=true \
+#   --set-string controller.podAnnotations."prometheus\.io/scrape"="true" \
+#   --set-string controller.podAnnotations."prometheus\.io/port"="10254"
 
-helm uninstall ingress --namespace ingress 
+# helm uninstall ingress --namespace ingress 
 
 # kubectl apply -f ./ingress/contour.yaml
 # sleep 60s
@@ -58,9 +62,6 @@ helm uninstall ingress --namespace ingress
 # helm upgrade --install ingress-nginx ingress-nginx \
 #   --repo https://kubernetes.github.io/ingress-nginx \
 #   --namespace nginx --create-namespace \
-
-# kubectl create namespace nginx
-kubectl apply -f ./ingress/deploy-ingress-nginx.yaml
 
 # sleep 150s
 
