@@ -1,5 +1,5 @@
 #!/bin/bash
-LB_IP=$(kubectl get svc/foo-service -n lb -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
+LB_IP=$(kubectl get svc/foo-service -n demo -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
 echo "-------------------------------------------"
 echo "LoadBalancer URL http://${LB_IP}:5678"
