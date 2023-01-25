@@ -11,6 +11,8 @@ kind create cluster --config dev-cluster.yaml
 ### Setup Ingress
 - Follow Ingress Setup instructions [ReadMe](./ingress/readme.md).
 
+- https://github.com/devops-by-example/tutorials/tree/master/lessons/013
+
 ### Setup MetalLB
 - Follow Ingress Setup instructions [ReadMe](./ingress/readme.md).
 
