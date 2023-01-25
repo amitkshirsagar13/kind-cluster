@@ -1,0 +1,32 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  namespace: nginx
+  name: nginx-ingress
+  labels:
+    app: kube-prometheus-stack-coredns
+    app.kubernetes.io/instance: kube-prometheus-stack
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    app.kubernetes.io/version: 44.2.1
+    chart: kube-prometheus-stack-44.2.1
+    heritage: Helm
+    release: kube-prometheus-stack
+  annotations:
+    meta.helm.sh/release-name: kube-prometheus-stack
+    meta.helm.sh/release-namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ingress-nginx
+      app.kubernetes.io/instance: ingress-nginx
+      app.kubernetes.io/component: controller
+      app.kubernetes.io/part-of: ingress-nginx
+      app.kubernetes.io/version: 1.5.1
+  namespaceSelector:
+    matchNames:
+    - nginx
+  endpoints:
+  - port: prometheus
+    interval: 30s

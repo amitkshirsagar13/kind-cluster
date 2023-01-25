@@ -3,11 +3,14 @@
 kind delete cluster -n dev 
 kind create cluster --config dev-cluster.yaml
 
+helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
+sleep 20s
+
 kubectl create namespace nginx
 kubectl apply -f ./ingress/nginx/nginx-ingress.yaml
+kubectl apply -f ./ingress/nginx/nginx-servicemonitor.yaml
 sleep 60s
 
-helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
 
 kubectl apply -f ./loadbalancer/metallb-native.yaml
 docker network inspect -f '{{.IPAM.Config}}' kind
@@ -22,7 +25,9 @@ kubectl apply -f ./loadbalancer/lb-demo-deploy.yaml
 kubectl apply -f ./prometheus/monitoring.ingress.yaml
 kubectl apply -f ./prometheus/monitoring.lb.yaml
 
-kubectl describe ingress monitoring
+kubectl get ingress -n demo echo-ingress
+kubectl get ingress -n demo foo-bar-ingress
+kubectl describe ingress -n monitoring monitoring
 
 # helm install ingress nginx-stable/nginx-ingress \
 # --namespace ingress --create-namespace \

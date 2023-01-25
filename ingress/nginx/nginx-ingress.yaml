@@ -334,8 +334,6 @@ subjects:
   namespace: nginx
 ---
 apiVersion: v1
-data:
-  allow-snippet-annotations: "true"
 kind: ConfigMap
 metadata:
   labels:
@@ -346,13 +344,34 @@ metadata:
     app.kubernetes.io/version: 1.5.1
   name: ingress-nginx-controller
   namespace: nginx
+data:
+  allow-snippet-annotations: "true"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "10254"
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/part-of: ingress-nginx
+    app.kubernetes.io/version: 1.5.1
+  name: ingress-nginx-prometheus
+  namespace: nginx
+spec:
+  type: ClusterIP
+  ports:
+    - name: prometheus
+      port: 10254
+      targetPort: prometheus
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/component: controller
+---
+apiVersion: v1
+kind: Service
+metadata:
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/instance: ingress-nginx
@@ -366,9 +385,6 @@ spec:
   - IPv4
   ipFamilyPolicy: SingleStack
   ports:
-  - name: prometheus
-    port: 10254
-    targetPort: prometheus
   - appProtocol: http
     name: http
     port: 80
@@ -436,9 +452,9 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "10254"
+      # annotations:
+      #   prometheus.io/scrape: "true"
+      #   prometheus.io/port: "10254"
       labels:
         app.kubernetes.io/component: controller
         app.kubernetes.io/instance: ingress-nginx
@@ -447,8 +463,8 @@ spec:
       containers:
       - args:
         - /nginx-ingress-controller
-        - --election-id=ingress-nginx-leader
         - --controller-class=k8s.io/ingress-nginx
+        - --election-id=ingress-nginx-leader
         - --ingress-class=nginx
         - --configmap=$(POD_NAMESPACE)/ingress-nginx-controller
         - --validating-webhook=:8443
@@ -456,6 +472,7 @@ spec:
         - --validating-webhook-key=/usr/local/certificates/key
         - --watch-ingress-without-class=true
         - --publish-status-address=localhost
+        # - --publish-service=$(POD_NAMESPACE)/ingress-nginx-controller
         # - -enable-prometheus-metrics
         # - -prometheus-metrics-listen-port
         env:

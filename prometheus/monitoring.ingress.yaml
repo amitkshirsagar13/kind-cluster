@@ -28,7 +28,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: kube-prometheus-stack-kube-prom-prometheus
+            name: kube-prometheus-stack-prometheus
             port:
               number: 9090
   # http://alert.localtest.me
@@ -39,7 +39,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: kube-prometheus-stack-kube-prom-alertmanager
+            name: kube-prometheus-stack-alertmanager
             port:
               number: 9093
   # http://operator.localtest.me
@@ -50,7 +50,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: kube-prometheus-stack-kube-prom-operator
+            name: kube-prometheus-stack-operator
             port:
               number: 443
   # http://kube.localtest.me
