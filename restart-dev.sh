@@ -4,15 +4,15 @@ kind delete cluster -n dev
 kind create cluster --config dev-cluster.yaml
 
 kubectl create namespace nginx
-kubectl apply -f ./ingress/deploy-ingress-nginx.yaml
+kubectl apply -f ./ingress/nginx/nginx-ingress.yaml
 sleep 60s
 
 helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
 
 kubectl apply -f ./loadbalancer/metallb-native.yaml
 docker network inspect -f '{{.IPAM.Config}}' kind
-kubectl apply -f ./loadbalancer/metallb-config-ipaddresspool.yaml
 sleep 60s
+kubectl apply -f ./loadbalancer/metallb-config-ipaddresspool.yaml
 
 kubectl create namespace demo
 kubectl apply -f ./ingress/echo-service.yaml

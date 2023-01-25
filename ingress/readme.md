@@ -30,5 +30,5 @@ kubectl patch daemonsets -n projectcontour envoy -p '{"spec":{"template":{"spec"
 
 ### Deploy Ingress NGINX
 ```
-kubectl apply -f ./ingress/deploy-ingress-nginx.yaml
+kubectl apply -f ./ingress/nginx/nginx-ingress.yaml
 ```
