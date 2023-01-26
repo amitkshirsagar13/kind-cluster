@@ -10,8 +10,7 @@ do
   curl ${LB_IP}:5678 -q
 done
 
-for i in {1..100}
-do
-  curl http://echo-write.localtest.me/ -q
-  curl http://echo-read.localtest.me/ -q
-done
+ab -k -c 350 -n 100000 http://echo-read.localtest.me/ &
+ab -k -c 350 -n 50000 http://echo-write.localtest.me/ &
+ab -k -c 350 -n 25000 http://echo-write.localtest.me/echo1 &
+ab -k -c 350 -n 25000 http://echo-write.localtest.me/echo2 &
